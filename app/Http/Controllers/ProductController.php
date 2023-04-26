@@ -68,7 +68,7 @@ class ProductController extends Controller
         //return view('products.edit', compact('product', 'categories'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required',
@@ -76,8 +76,8 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-
-        $product = Product::find($id);
+        $productId = $request->input('product_id');
+        $product = Product::find($productId);
         $product->name = $request->input('name');
         $product->description = $request->input('description');
         $product->price = $request->input('price');
