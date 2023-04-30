@@ -24,6 +24,7 @@ class CartProductController extends Controller
     public function show($id)
     {
         $product = Product::find($id);
+        
         return view('cartproduct.show', ['product' => $product]);
     }
 

@@ -171,24 +171,20 @@
 @if (auth()->check())
 <x-app-layout>
   <x-slot name="header">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-
+    
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
         {{ __('Product Details') }}
     </h2>
 </x-slot>
+@if(isset($product))
 <div class="container">
   <div class="card">
       <div class="container-fliud">
           <div class="wrapper row">
               <div class="preview col-md-6">
-                  
                   <div class="preview-pic tab-content">
                     <div class="tab-pane active" id="pic-1"><img src="{{ asset('storage/images/' . $product->image) }}" class="card-img" alt="{{ $product->name }}"></div>
-                    
                   </div>
-                  
-                  
               </div>
               <div class="details col-md-6">
                   <h3 class="product-title">{{ $product->name }}</h3>
@@ -207,13 +203,18 @@
                    
                   
                   <div class="action">
-                      <button class="add-to-cart btn btn-default" type="button">add to cart</button>
+                      <button class="add-to-cart btn btn-default"
+                      data-product-id="{{ $product->id }}"
+                      data-name="{{ $product->name }}"
+                      data-price="{{ $product->price }}"
+                      type="button">add to cart</button>
                   </div>
               </div>
           </div>
       </div>
   </div>
 </div>
+@endif
 </x-app-layout>
 @else
 @extends('layouts.anonymous')
@@ -221,18 +222,19 @@
   Products des
 @endsection
 @section('content')
+@if(isset($product))
 <div class="container">
     <div class="card">
         <div class="container-fliud">
             <div class="wrapper row">
                 <div class="preview col-md-6">
-                    
                     <div class="preview-pic tab-content">
+                      @if(isset($product->image))
                       <div class="tab-pane active" id="pic-1"><img src="{{ asset('storage/images/' . $product->image) }}" class="card-img" alt="{{ $product->name }}"></div>
-                      
+                   @else
+                      <p>No image available.</p>
+                   @endif
                     </div>
-                    
-                    
                 </div>
                 <div class="details col-md-6">
                     <h3 class="product-title">{{ $product->name }}</h3>
@@ -249,14 +251,57 @@
                     <p class="product-description">{{ $product->description }}</p>
                     <h4 class="price">current price: <span>{{ $product->price }}</span></h4>
                      
-                    
                     <div class="action">
-                        <button class="add-to-cart btn btn-default" type="button">add to cart</button>
+                        <button class="add-to-cart btn btn-default"
+                        data-product-id="{{ $product->id }}"
+                        data-name="{{ $product->name }}"
+                        data-price="{{ $product->price }}"
+                        type="button">add to cart</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+@endif
+
 @endsection
 @endif
+<script>
+  const checkoutButton = document.getElementById('checkout-button');
+  const cartCountElement = checkoutButton.querySelector('.badge');
+  // Add event listener to "Add to Cart" buttons
+  const addToCartButtons = document.querySelectorAll('.add-to-cart');
+  addToCartButtons.forEach(button => {
+    button.addEventListener('click', event => {
+      const productId = event.target.dataset.productId;
+      const productName = event.target.dataset.name;
+      const price = event.target.dataset.price;
+      addToCart(productId,productName,price);
+    });
+  });
+  
+  // Add product to local storage
+  function addToCart(productId,productName,price) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const product = { id: productId, quantity: 1 ,productName:productName,price:price};
+    const existingProductIndex = cart.findIndex(item => item.id === productId);
+    if (existingProductIndex !== -1) {
+      cart[existingProductIndex].quantity++;
+    } else {
+      cart.push(product);
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+  
+    //const cartCount = Object.values(cart).reduce((acc, val) => acc + val, 0);
+    cartCountElement.textContent =getCartItemCount();
+  }
+  function getCartItemCount() {
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let count = 0;
+  for (let i = 0; i < cart.length; i++) {
+    count += cart[i].quantity;
+  }
+  return count;
+  }
+  </script>

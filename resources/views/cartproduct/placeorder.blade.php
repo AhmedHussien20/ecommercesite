@@ -163,6 +163,18 @@ span.price {
           </div>
           
           <script>
+            const checkoutButton = document.getElementById('checkout-button');
+      const cartCountElement = checkoutButton.querySelector('.badge');
+      
+      function getCartItemCount() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let count = 0;
+      for (let i = 0; i < cart.length; i++) {
+        count += cart[i].quantity;
+      }
+      return count;
+      }
+           cartCountElement.textContent =getCartItemCount();
             document.addEventListener('DOMContentLoaded', function() {
               // Get cart items from localStorage
               var cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -174,14 +186,27 @@ span.price {
               cartItems.innerHTML = '';
               // Loop through cart items and create HTML for each item
               var total = 0;
-              cart.forEach(function(item) {
-                var html = '<p><a href="#">' + item.productName + '</a>  </p><span class="quantity">QTY' + item.quantity + '</span> <span class="price">$' + item.price + '</span></p>';
-                cartItems.innerHTML += html;
-                total += parseFloat(item.price);
-              }); 
-              var cartTotal = document.getElementById('cart-total');
-              cartTotal.innerHTML = total;
-            });
+              cart.forEach(function(item, index) {
+      var html = '<p><a href="#">' + item.productName + '</a>  </p><span class="quantity">QTY' + item.quantity + '</span> <span class="price">$' + item.price + '</span> <button class="delete-btn" data-index="' + index + '">Delete</button></p>';
+      cartItems.innerHTML += html;
+      total += parseFloat(item.price);
+    }); 
+    var cartTotal = document.getElementById('cart-total');
+    cartTotal.innerHTML = total;
+    cartCountElement.textContent =getCartItemCount();
+             
+// Add event listener to delete buttons
+    var deleteButtons = document.querySelectorAll('.delete-btn');
+    deleteButtons.forEach(function(button) {
+      button.addEventListener('click', function(event) {
+        var index = parseInt(button.dataset.index);
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        location.reload();
+        cartCountElement.textContent =getCartItemCount();
+      });
+    });
+  });
           </script>
 
 <script>
@@ -232,7 +257,11 @@ span.price {
         });
       });
     });
+    
     </script>
+    <script>
+      
+      </script>
     </div>
   </div>
 </x-app-layout>
