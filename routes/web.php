@@ -53,7 +53,7 @@ Route::middleware(['is_admin','add.created_by'])->group(function () {
     Route::post('/products/store', 'store')->name('products.insert');
     Route::get('/products/edit/{id}', 'edit')->name('products.edit');
     Route::post('/products/update', 'update')->name('products.update');
-    Route::post('/products/delete', 'delete')->name('products.delete');
+    Route::delete('/products/destroy/{id}', 'destroy')->name('products.destroy');
 });
 });
 //Route::get('/user', [CartProductController::class, 'index']);

@@ -190,7 +190,7 @@
 
             </td>
             <td>
-                <form action="{{ route('products.delete', $product->id) }}" method="POST">
+                <form action="{{ route('products.destroy', $product->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?')">Delete</button>

@@ -44,7 +44,7 @@
                 <input type="text" class="form-control" id="name" name="name">
               </div>
               <div class="form-group">
-                <textarea id="description" name="description" placeholder="Type here Your description" rows="5" cols="40"></textarea>
+                <textarea id="description" name="description" placeholder="Type here Your description Cat" rows="5" cols="40"></textarea>
               </div>
              
               <button type="submit" class="btn btn-primary">Create</button>
